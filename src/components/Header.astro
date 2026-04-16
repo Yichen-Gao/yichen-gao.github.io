@@ -1,0 +1,33 @@
+---
+import { navigation, site } from '../data/site';
+
+const { currentPath } = Astro.props as { currentPath: string };
+const normalize = (value: string) => (value.endsWith('/') ? value : `${value}/`);
+const isActive = (href: string) => {
+  const current = normalize(currentPath || '/');
+  const target = normalize(href);
+  return target === '/' ? current === '/' : current.startsWith(target);
+};
+---
+
+<header class="site-header">
+  <div class="shell site-header__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark">YG</span>
+      <span class="brand__text">
+        <strong>{site.name}</strong>
+        <small>{site.role}</small>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary">
+      {navigation.map((item) => (
+        <a class={isActive(item.href) ? 'active' : ''} href={item.href}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <a class="header-cta" href="/contact/">Get in touch</a>
+  </div>
+</header>

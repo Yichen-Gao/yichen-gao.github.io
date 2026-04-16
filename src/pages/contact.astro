@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout title="Contact | Yichen Gao" description="Contact and profile links for Yichen Gao.">
+  <section class="shell page-intro">
+    <p class="eyebrow">Contact</p>
+    <h1>Keep the contact path short and obvious.</h1>
+    <p>
+      If you are actively job searching, remove friction: show the one or two links you actually want people to use, and keep
+      the copy direct.
+    </p>
+  </section>
+
+  <section class="shell contact-grid">
+    {site.social.map((item) => (
+      <a class="card contact-card" href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+        <p class="eyebrow">Primary link</p>
+        <h2>{item.label}</h2>
+        <p>{item.href.replace('mailto:', '')}</p>
+      </a>
+    ))}
+
+    <article class="card contact-card">
+      <p class="eyebrow">Before you publish</p>
+      <h2>Final cleanup checklist</h2>
+      <p>
+        Replace the placeholder email, add one more real case study, and tighten your headline so it matches the roles you are
+        applying for.
+      </p>
+    </article>
+  </section>
+</BaseLayout>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+import { skillGroups, strengths, timeline } from '../data/resume';
+---
+
+<BaseLayout title="Resume View | Yichen Gao" description="A concise, readable resume-style overview for Yichen Gao.">
+  <section class="shell page-intro">
+    <p class="eyebrow">Resume view</p>
+    <h1>A scannable summary for recruiters, interviewers, and collaborators.</h1>
+    <p>{site.status}</p>
+  </section>
+
+  <section class="shell resume-grid">
+    <div class="resume-block card">
+      <p class="eyebrow">Profile</p>
+      <h2>{site.name} / {site.nativeName}</h2>
+      <p>{site.intro}</p>
+      <p>{site.location}</p>
+    </div>
+
+    <div class="resume-block card">
+      <p class="eyebrow">Strengths</p>
+      <div class="stack-list">
+        {strengths.map((item) => (
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="shell resume-timeline">
+    <div>
+      <p class="eyebrow">Story arc</p>
+      <h2>Present your trajectory with intention.</h2>
+    </div>
+    <div class="timeline-list">
+      {timeline.map((item) => (
+        <article class="timeline-item">
+          <span>{item.period}</span>
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="shell skill-columns">
+    {skillGroups.map((group) => (
+      <article class="card">
+        <p class="eyebrow">{group.title}</p>
+        <ul class="bullet-list">
+          {group.items.map((item) => <li>{item}</li>)}
+        </ul>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

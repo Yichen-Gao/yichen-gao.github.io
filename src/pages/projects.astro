@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { projects } from '../data/projects';
+import ProjectCard from '../components/ProjectCard.astro';
+---
+
+<BaseLayout title="Projects | Yichen Gao" description="Selected projects and case-study frames for a job-search ready personal site.">
+  <section class="shell page-intro">
+    <p class="eyebrow">Projects</p>
+    <h1>Selected work, reframed for hiring conversations.</h1>
+    <p>
+      Treat each card as a compact case study. The best portfolio projects explain context, system design, tradeoffs, and the
+      impact or learning that followed.
+    </p>
+  </section>
+
+  <section class="shell card-grid">
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </section>
+</BaseLayout>

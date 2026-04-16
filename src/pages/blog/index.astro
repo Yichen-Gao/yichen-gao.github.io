@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<BaseLayout title="Blog | Yichen Gao" description="Notes, case studies, and technical writing from Yichen Gao.">
+  <section class="shell page-intro">
+    <p class="eyebrow">Blog</p>
+    <h1>Writing that shows process, taste, and technical judgment.</h1>
+    <p>
+      Short, useful posts are enough. Recruiters do not need a huge archive; they need proof that you can reason clearly and
+      explain what you build.
+    </p>
+  </section>
+
+  <section class="shell card-grid card-grid--posts">
+    {posts.map((post) => <PostCard post={post} />)}
+  </section>
+</BaseLayout>

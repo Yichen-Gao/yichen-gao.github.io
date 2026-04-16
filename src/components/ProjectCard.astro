@@ -1,0 +1,23 @@
+---
+import type { Project } from '../data/projects';
+
+const { project } = Astro.props as { project: Project };
+---
+
+<article class="card project-card">
+  <div class="card__meta">
+    <span>{project.category}</span>
+    <span>{project.period}</span>
+  </div>
+  <h3>{project.title}</h3>
+  <p>{project.summary}</p>
+  <p class="project-card__outcome">{project.outcome}</p>
+  <ul class="tag-list" aria-label={`${project.title} tech stack`}>
+    {project.stack.map((item) => <li>{item}</li>)}
+  </ul>
+  {project.href ? (
+    <a class="text-link" href={project.href} target="_blank" rel="noreferrer">View repository</a>
+  ) : (
+    <span class="text-link text-link--muted">Add a case-study link here</span>
+  )}
+</article>
