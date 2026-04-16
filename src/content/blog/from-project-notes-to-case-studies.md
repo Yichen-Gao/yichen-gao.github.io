@@ -1,30 +1,30 @@
 ---
-title: From Project Notes to Portfolio Case Studies
-description: A lightweight structure for turning messy project history into something a recruiter can actually understand.
+title: 怎样把零散项目笔记整理成能打动人的案例
+description: 一个轻量但实用的结构，帮你把过去的项目经历改写成招聘方看得懂的 case study。
 pubDate: 2026-04-14
 tags:
-  - writing
-  - portfolio
-  - case study
+  - 写作
+  - 项目复盘
+  - 求职
 featured: false
 ---
 
-A strong project page usually answers four questions quickly:
+一个好的项目案例，通常先回答四个问题。
 
-## 1. What was the problem?
+## 1. 你当时在解决什么问题？
 
-Start with the situation, not the stack.
+先讲场景，再讲技术栈。让读者先明白问题，而不是先看到名词。
 
-## 2. Why did it matter?
+## 2. 这个问题为什么值得做？
 
-Add one sentence about users, workflow pain, research friction, or business value.
+补一句它影响了谁，是效率问题、体验问题、实验问题，还是业务问题。
 
-## 3. What decisions did you make?
+## 3. 你做了哪些关键决定？
 
-This is where technical depth lives. Talk about tradeoffs, experiments, simplifications, and what you intentionally did not build.
+这里才是技术深度最应该出现的地方。可以讲取舍、实验、简化和你刻意没有做的部分。
 
-## 4. What changed because of the work?
+## 4. 最后带来了什么变化？
 
-Even when hard metrics are unavailable, you can usually describe a concrete improvement in speed, reliability, clarity, or capability.
+即使没有很漂亮的指标，也通常可以讲清楚它在速度、稳定性、清晰度或能力上的改进。
 
-That structure is often enough to make older work feel much stronger without rewriting everything from scratch.
+很多过去看起来很零散的项目，只要按这个结构重写一遍，就会比原来有说服力得多。

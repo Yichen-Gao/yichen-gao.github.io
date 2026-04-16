@@ -4,23 +4,23 @@ import { site } from '../data/site';
 import { skillGroups, strengths, timeline } from '../data/resume';
 ---
 
-<BaseLayout title="Resume View | Yichen Gao" description="A concise, readable resume-style overview for Yichen Gao.">
+<BaseLayout title="简历 | 高一辰" description="适合招聘方快速浏览的中文简历页。">
   <section class="shell page-intro">
-    <p class="eyebrow">Resume view</p>
-    <h1>A scannable summary for recruiters, interviewers, and collaborators.</h1>
+    <p class="eyebrow">简历页</p>
+    <h1>给招聘方、面试官和合作方快速浏览的一页摘要。</h1>
     <p>{site.status}</p>
   </section>
 
   <section class="shell resume-grid">
     <div class="resume-block card">
-      <p class="eyebrow">Profile</p>
+      <p class="eyebrow">个人简介</p>
       <h2>{site.name} / {site.nativeName}</h2>
       <p>{site.intro}</p>
       <p>{site.location}</p>
     </div>
 
     <div class="resume-block card">
-      <p class="eyebrow">Strengths</p>
+      <p class="eyebrow">优势</p>
       <div class="stack-list">
         {strengths.map((item) => (
           <div>
@@ -34,8 +34,8 @@ import { skillGroups, strengths, timeline } from '../data/resume';
 
   <section class="shell resume-timeline">
     <div>
-      <p class="eyebrow">Story arc</p>
-      <h2>Present your trajectory with intention.</h2>
+      <p class="eyebrow">经历脉络</p>
+      <h2>把轨迹讲得更清楚，比堆信息更重要。</h2>
     </div>
     <div class="timeline-list">
       {timeline.map((item) => (

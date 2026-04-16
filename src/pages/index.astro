@@ -13,25 +13,25 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
 ---
 
 <BaseLayout>
-  <section class="hero shell section-grid">
+  <section class="hero shell">
     <div class="hero__copy">
-      <p class="eyebrow">Open to opportunities</p>
+      <p class="eyebrow">正在找工作</p>
       <h1>{site.intro}</h1>
       <p class="hero__lede">{site.status}</p>
       <p class="hero__body">{site.pitch}</p>
 
       <div class="hero__actions">
-        <a class="button button--primary" href="/projects/">See selected work</a>
-        <a class="button button--ghost" href="/resume/">Read the resume view</a>
+        <a class="button button--primary" href="/projects/">看精选项目</a>
+        <a class="button button--ghost" href="/resume/">看简历页</a>
       </div>
 
-      <ul class="hero__focus" aria-label="Current focus">
+      <ul class="hero__focus" aria-label="当前关注方向">
         {site.focus.map((item) => <li>{item}</li>)}
       </ul>
     </div>
 
     <aside class="hero-panel">
-      <p class="hero-panel__label">What this site is optimized for</p>
+      <p class="hero-panel__label">这个主页最想传达的三件事</p>
       <div class="hero-panel__metrics">
         {site.heroMetrics.map((metric) => (
           <div>
@@ -41,21 +41,18 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
         ))}
       </div>
       <div class="hero-panel__note">
-        <p class="eyebrow">Positioning</p>
-        <p>
-          A recruiter or hiring manager should be able to understand your direction, strongest work, and writing style within
-          a few minutes.
-        </p>
+        <p class="eyebrow">定位</p>
+        <p>希望招聘方在几分钟内看懂我的方向、最强项目，以及我解决问题和表达技术的方式。</p>
       </div>
     </aside>
   </section>
 
   <section class="shell section-grid section-grid--tight">
     <div>
-      <p class="eyebrow">Selected projects</p>
-      <h2>Case studies that frame your work as engineering, not just coursework.</h2>
+      <p class="eyebrow">精选项目</p>
+      <h2>不只是课程作业，而是能拿来讲清楚思路、取舍和结果的项目案例。</h2>
     </div>
-    <a class="text-link text-link--top" href="/projects/">Browse all project cards</a>
+    <a class="text-link text-link--top" href="/projects/">查看全部项目卡片</a>
   </section>
 
   <section class="shell card-grid">
@@ -64,27 +61,25 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
 
   <section class="shell split-section">
     <div>
-      <p class="eyebrow">Why this format works</p>
-      <h2>More portfolio, less template.</h2>
+      <p class="eyebrow">为什么这样改</p>
+      <h2>少一点旧模板感，多一点作品集感。</h2>
     </div>
     <div class="split-section__content">
       <p>
-        Instead of looking like an untouched academic homepage, this layout puts project framing, practical focus, and readable
-        writing first. It is designed to support outreach, interviews, and resume links.
+        相比本科时期偏学术主页的旧站，这一版更强调项目叙事、求职定位和可快速浏览的内容结构，更适合挂在简历里。
       </p>
       <p>
-        The next step is simple: replace the weakest placeholder with a real case study that shows decisions, tradeoffs, and
-        outcomes.
+        下一步最重要的不是继续换主题，而是把最强的一两个真实项目补成完整 case study，让网站真正有说服力。
       </p>
     </div>
   </section>
 
   <section class="shell section-grid section-grid--tight">
     <div>
-      <p class="eyebrow">Latest writing</p>
-      <h2>Use short posts to show how you think, debug, and communicate.</h2>
+      <p class="eyebrow">最新文章</p>
+      <h2>用短文章展示你的思考过程、调试方式和技术判断。</h2>
     </div>
-    <a class="text-link text-link--top" href="/blog/">Open the blog archive</a>
+    <a class="text-link text-link--top" href="/blog/">进入博客归档</a>
   </section>
 
   <section class="shell card-grid card-grid--posts">

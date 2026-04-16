@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 
 const { post } = Astro.props as { post: CollectionEntry<'blog'> };
-const date = post.data.pubDate.toLocaleDateString('en-US', {
+const date = post.data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'short',
   day: 'numeric',
@@ -16,5 +16,5 @@ const date = post.data.pubDate.toLocaleDateString('en-US', {
   </div>
   <h3><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h3>
   <p>{post.data.description}</p>
-  <a class="text-link" href={`/blog/${post.slug}/`}>Read article</a>
+  <a class="text-link" href={`/blog/${post.slug}/`}>阅读全文</a>
 </article>

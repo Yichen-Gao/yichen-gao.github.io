@@ -12,14 +12,14 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const date = post.data.pubDate.toLocaleDateString('en-US', {
+const date = post.data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
 ---
 
-<BaseLayout title={`${post.data.title} | Yichen Gao`} description={post.data.description}>
+<BaseLayout title={`${post.data.title} | 高一辰`} description={post.data.description}>
   <article class="shell article">
     <p class="eyebrow">{date}</p>
     <h1>{post.data.title}</h1>

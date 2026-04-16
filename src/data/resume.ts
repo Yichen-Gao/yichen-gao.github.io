@@ -1,53 +1,47 @@
 export const strengths = [
   {
-    title: 'Research-minded engineering',
-    detail:
-      'Comfortable working from vague ideas toward concrete experiments, clearer assumptions, and more reusable tooling.',
+    title: '研究导向的工程实现',
+    detail: '能从模糊想法出发，逐步落到实验方案、实现细节和更可复用的工具沉淀。',
   },
   {
-    title: 'Systems and workflow thinking',
-    detail:
-      'Interested in the connective tissue around AI work: evaluation, reproducibility, task handoff, and developer ergonomics.',
+    title: '系统与流程视角',
+    detail: '不只关注模型效果，也关注评测、复现、协作交接和整体开发效率。',
   },
   {
-    title: 'Communication that travels',
-    detail:
-      'I care about turning technical work into artifacts that make sense to teammates, interviewers, and future collaborators.',
+    title: '能把技术工作讲清楚',
+    detail: '重视表达、结构和叙事，愿意把复杂项目整理成别人看得懂、记得住的案例。',
   },
 ];
 
 export const timeline = [
   {
-    period: 'Now',
-    title: 'Job-search focused rebuild',
-    detail:
-      'Turning older research and project work into cleaner case studies, better presentation, and blog posts that are easier to scan in interviews.',
+    period: '现在',
+    title: '面向求职重建个人主页',
+    detail: '把过去较零散的研究与项目经历重新整理成更适合投递和面试交流的案例、文章和主页结构。',
   },
   {
-    period: 'Recent work',
-    title: 'AI tooling and evaluation themes',
-    detail:
-      'Focus areas include experiment workflows, multimodal evaluation, research automation, and portfolio-ready engineering narratives.',
+    period: '近期方向',
+    title: 'AI 工具链、评测与自动化',
+    detail: '重点兴趣包括实验工作流、多模态评测、研究自动化和更高效的技术产出流程。',
   },
   {
-    period: 'Next edit',
-    title: 'Add your exact roles here',
-    detail:
-      'Replace this section with internships, labs, publications, open-source work, or shipped product experience before you share the site widely.',
+    period: '下一步',
+    title: '补全真实经历与量化结果',
+    detail: '这里建议后续替换成你的实习、实验室、项目或开源经历，并尽量补上结果和影响。',
   },
 ];
 
 export const skillGroups = [
   {
-    title: 'Core areas',
-    items: ['Applied AI', 'ML systems', 'Evaluation pipelines', 'Research tooling'],
+    title: '关注方向',
+    items: ['AI 应用', '机器学习系统', '评测流程', '研究工具链'],
   },
   {
-    title: 'Technical stack',
-    items: ['Python', 'Git', 'CLI workflows', 'Data analysis', 'Static sites'],
+    title: '常用技术',
+    items: ['Python', 'Git', 'CLI 工作流', '数据分析', '静态网站'],
   },
   {
-    title: 'What recruiters should notice',
-    items: ['Ownership', 'Clarity', 'Iteration speed', 'Taste in project presentation'],
+    title: '希望被看见的能力',
+    items: ['主动性', '表达清晰', '迭代速度', '项目包装能力'],
   },
 ];

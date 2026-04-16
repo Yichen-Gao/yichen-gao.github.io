@@ -1,37 +1,31 @@
 export const site = {
   name: 'Yichen Gao',
   nativeName: '高一辰',
-  title: 'Yichen Gao | Applied AI, ML Systems, and Research Engineering',
-  description:
-    'A job-search ready personal site for sharing projects, writing, and focused case studies in applied AI and research tooling.',
+  title: '高一辰 | AI 应用、机器学习系统与研究工程',
+  description: '面向求职重构的个人网站，用来展示项目案例、技术文章和更适合简历引用的个人主页。',
   url: 'https://yichen-gao.github.io',
-  role: 'Applied AI Builder',
-  location: 'Based in China · Open to full-time roles and remote-friendly teams',
-  status: 'Actively looking for roles in applied AI, ML systems, research engineering, and technical product building.',
-  intro:
-    'I build practical AI systems, evaluation workflows, and research tools that make messy ideas easier to ship, measure, and explain.',
+  role: 'AI 应用与研究工程',
+  location: '中国 · 正在寻找全职机会，也接受远程友好团队',
+  status: '目前正在找工作，重点关注 AI 应用、机器学习系统、研究工程与技术产品化方向。',
+  intro: '我做能真正落地的 AI 系统、评测流程和研究工具，把复杂想法变成可交付、可验证、可讲清楚的成果。',
   pitch:
-    'This site is designed as a clean hiring-facing home for projects, case studies, and technical writing. It replaces an older academic template with something more direct, modern, and portfolio-friendly.',
-  focus: [
-    'Applied AI and multimodal systems',
-    'Experiment workflows and research tooling',
-    'Clear technical writing and project storytelling',
-  ],
+    '这个网站是为了求职重新搭建的新版主页，用来替换本科时期更偏学术模板的旧站，更直接地展示项目、文章和案例复盘。',
+  focus: ['AI 应用与多模态系统', '实验流程、评测工具与自动化', '把复杂项目讲清楚的技术表达'],
   heroMetrics: [
-    { value: '01', label: 'clear personal brand' },
-    { value: '02', label: 'selected case studies' },
-    { value: '03', label: 'blog posts that show how you think' },
+    { value: '01', label: '清晰的个人定位' },
+    { value: '02', label: '可快速浏览的项目案例' },
+    { value: '03', label: '能体现思考方式的技术文章' },
   ],
   social: [
     { label: 'GitHub', href: 'https://github.com/Yichen-Gao' },
-    { label: 'Email', href: 'mailto:your.email@example.com' },
+    { label: '邮箱', href: 'mailto:your.email@example.com' },
   ],
 };
 
 export const navigation = [
-  { label: 'Home', href: '/' },
-  { label: 'Projects', href: '/projects/' },
-  { label: 'Blog', href: '/blog/' },
-  { label: 'Resume', href: '/resume/' },
-  { label: 'Contact', href: '/contact/' },
+  { label: '首页', href: '/' },
+  { label: '项目', href: '/projects/' },
+  { label: '博客', href: '/blog/' },
+  { label: '简历', href: '/resume/' },
+  { label: '联系我', href: '/contact/' },
 ];

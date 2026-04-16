@@ -3,32 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../data/site';
 ---
 
-<BaseLayout title="Contact | Yichen Gao" description="Contact and profile links for Yichen Gao.">
+<BaseLayout title="联系我 | 高一辰" description="高一辰的联系信息与外部链接。">
   <section class="shell page-intro">
-    <p class="eyebrow">Contact</p>
-    <h1>Keep the contact path short and obvious.</h1>
-    <p>
-      If you are actively job searching, remove friction: show the one or two links you actually want people to use, and keep
-      the copy direct.
-    </p>
+    <p class="eyebrow">联系我</p>
+    <h1>把联系路径做短、做清楚，投递时会更省心。</h1>
+    <p>如果你正在求职，联系方式不需要复杂，保留最常用的两个入口就够了。</p>
   </section>
 
   <section class="shell contact-grid">
     {site.social.map((item) => (
       <a class="card contact-card" href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
-        <p class="eyebrow">Primary link</p>
+        <p class="eyebrow">主要入口</p>
         <h2>{item.label}</h2>
         <p>{item.href.replace('mailto:', '')}</p>
       </a>
     ))}
 
     <article class="card contact-card">
-      <p class="eyebrow">Before you publish</p>
-      <h2>Final cleanup checklist</h2>
-      <p>
-        Replace the placeholder email, add one more real case study, and tighten your headline so it matches the roles you are
-        applying for.
-      </p>
+      <p class="eyebrow">发布前提醒</p>
+      <h2>最后收尾清单</h2>
+      <p>把占位邮箱换成真实邮箱，再补一到两个真实项目案例，这个站点就可以正式挂到简历里了。</p>
     </article>
   </section>
 </BaseLayout>

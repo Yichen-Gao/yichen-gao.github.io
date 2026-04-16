@@ -8,13 +8,12 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<BaseLayout title="Blog | Yichen Gao" description="Notes, case studies, and technical writing from Yichen Gao.">
+<BaseLayout title="博客 | 高一辰" description="高一辰的技术文章、项目复盘与阶段性思考。">
   <section class="shell page-intro">
-    <p class="eyebrow">Blog</p>
-    <h1>Writing that shows process, taste, and technical judgment.</h1>
+    <p class="eyebrow">博客</p>
+    <h1>文章不需要很多，但应该能体现你的思考方式。</h1>
     <p>
-      Short, useful posts are enough. Recruiters do not need a huge archive; they need proof that you can reason clearly and
-      explain what you build.
+      对求职来说，博客的作用不是堆数量，而是证明你能把项目讲明白，能解释技术判断，也能把经验沉淀成别人读得懂的内容。
     </p>
   </section>
 

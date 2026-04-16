@@ -1,31 +1,31 @@
 ---
-title: Building a Job-Search Ready Personal Site
-description: Why I replaced an old academic template with a cleaner portfolio and writing-first layout.
+title: 为什么我把旧个人站重做成求职版主页
+description: 从本科时期的学术模板，切到更适合挂在简历里的项目与写作型主页。
 pubDate: 2026-04-16
 tags:
-  - portfolio
-  - astro
-  - job search
+  - 求职
+  - 个人网站
+  - Astro
 featured: true
 ---
 
-A personal site does not need to be large to be useful.
+个人网站不需要很大，但需要足够有用。
 
-For hiring, the goal is usually much simpler:
+如果目的是找工作，它最重要的任务通常只有三个：
 
-1. make it easy to understand what you work on,
-2. surface a few strong projects,
-3. show that you can explain technical decisions clearly.
+1. 让人快速看懂你在做什么；
+2. 把最强的几个项目放到最前面；
+3. 让别人感受到你能把技术工作讲清楚。
 
-My older site was closer to a generic academic template. It worked as a homepage, but it did not help me tell a hiring-facing story. This rebuild is meant to fix that.
+我之前的网站更像一个通用学术模板。它可以当主页，但不太适合拿去做求职入口。这次重做，目标就是把它变成更适合简历、投递和面试交流的版本。
 
-## What changed
+## 这次改了什么
 
-- The homepage now leads with direction and project framing.
-- The navigation is shorter and easier to scan.
-- The blog is positioned as a proof of thinking, not a dumping ground.
-- The overall design is more editorial and portfolio-oriented.
+- 首页先讲方向和项目，而不是先堆栏目。
+- 导航更短，更适合招聘方快速浏览。
+- 博客被放在“展示思考方式”的位置，而不是内容仓库。
+- 整体视觉更像作品集，而不是旧模板直接套壳。
 
-## What comes next
+## 下一步最重要的事
 
-The most important follow-up is not another theme tweak. It is turning real work into sharper case studies with context, constraints, and outcomes.
+最重要的不是继续换主题，而是把真实项目整理成更完整的案例：背景是什么、做了哪些取舍、最终带来了什么结果。

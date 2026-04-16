@@ -12,46 +12,46 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: 'Labflow',
-    period: 'Tooling / ongoing',
-    category: 'Workflow automation',
+    period: '工具链 / 持续迭代中',
+    category: '科研工作流自动化',
     summary:
-      'A research workflow toolkit aimed at making experiments, artifacts, and task handoffs easier to organize and revisit.',
+      '面向研究与实验管理的工作流工具，目标是把任务拆解、结果沉淀、协作交接和复盘过程整理得更顺畅。',
     outcome:
-      'Useful as a portfolio story about turning internal productivity pain points into a reusable engineering system.',
+      '适合作为求职时的案例：它不是单点脚本，而是把真实效率痛点抽象成可复用系统的工程思路。',
     stack: ['Python', 'Automation', 'Experiment Ops'],
     href: 'https://github.com/Yichen-Gao/Labflow',
     featured: true,
   },
   {
-    title: 'Multimodal Evaluation Workbench',
-    period: 'Research project',
-    category: 'Benchmarking',
+    title: '多模态评测工作台',
+    period: '研究项目',
+    category: '评测与分析',
     summary:
-      'A portfolio-ready bucket for benchmark design, error analysis, and evaluation scripts around audio or multimodal language systems.',
+      '围绕音频或多模态语言任务整理 benchmark、误差分析和评测脚本，让模型能力与失败模式更容易被看清。',
     outcome:
-      'Shows that you can move beyond model demos and build measurement pipelines that expose strengths, blind spots, and failure modes.',
+      '这个方向能体现我不仅会跑模型，也会搭评测闭环，知道怎样把结果转化成可信结论。',
     stack: ['Python', 'Evaluation', 'Data Analysis'],
     featured: true,
   },
   {
-    title: 'Research Automation Loop',
-    period: 'Internal tooling',
-    category: 'Developer experience',
+    title: '研究自动化迭代链路',
+    period: '内部工具化',
+    category: '开发体验',
     summary:
-      'An automation setup for compressing the loop between idea capture, implementation, experiment tracking, and review-oriented iteration.',
+      '把想法整理、实现、实验跟踪和审稿式回看串成一个更短的循环，减少重复劳动，提高试错效率。',
     outcome:
-      'Frames your work as end-to-end system thinking rather than isolated notebooks or one-off scripts.',
+      '它展示的是系统视角：我关心的不只是模型本身，也关心团队如何更快地产出和复用结果。',
     stack: ['CLI', 'Prompt Workflows', 'Experiment Tracking'],
     featured: true,
   },
   {
-    title: 'Case Study Placeholder',
-    period: 'Add one more',
-    category: 'Recommended edit',
+    title: '待补充的代表项目',
+    period: '建议尽快替换',
+    category: '简历强化位',
     summary:
-      'Swap this card with your strongest internship, thesis, open-source, or production-facing project before sending the site to recruiters.',
+      '这里建议补上你最强的一段经历，比如实习、课程设计、论文项目、开源贡献或真正落地过的产品功能。',
     outcome:
-      'The best version of this site has at least one story with clear context, decision-making, technical depth, and measurable results.',
-    stack: ['Your stack', 'Your result', 'Your impact'],
+      '最打动招聘方的项目页，通常不是数量多，而是至少有一个案例能清楚讲出背景、取舍、实现和结果。',
+    stack: ['你的技术栈', '你的结果', '你的影响'],
   },
 ];
