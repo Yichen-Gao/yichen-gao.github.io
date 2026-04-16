@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { categoryToSlug } from '../../utils/blog';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -14,20 +15,21 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const date = post.data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
-  month: 'long',
-  day: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
 });
+const categorySlug = categoryToSlug(post.data.category);
 ---
 
 <BaseLayout title={`${post.data.title} | 高一辰`} description={post.data.description}>
-  <article class="shell article">
-    <p class="eyebrow">{date}</p>
+  <article class="shell article-page">
+    <div class="article-page__meta">
+      <a class="category-chip" href={`/blog/category/${categorySlug}/`}>{post.data.category}</a>
+      <span>{date}</span>
+    </div>
     <h1>{post.data.title}</h1>
-    <p class="article__dek">{post.data.description}</p>
-    <ul class="tag-list article__tags">
-      {post.data.tags.map((tag) => <li>{tag}</li>)}
-    </ul>
-    <div class="article__content">
+    <p class="article-page__dek">{post.data.description}</p>
+    <div class="article-page__content">
       <Content />
     </div>
   </article>

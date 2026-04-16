@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { categoryToSlug } from '../../../utils/blog';
+
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const categories = [...new Set(allPosts.map((post) => post.data.category))];
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const categories = [...new Set(posts.map((post) => post.data.category))];
+  return categories.map((category) => ({
+    params: { category: categoryToSlug(category) },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const posts = allPosts.filter((post) => post.data.category === category);
+---
+
+<BaseLayout title={`${category} | 博客`} description={`${category} 分类下的博客文章。`}>
+  <section class="shell content-page">
+    <div class="section-heading section-heading--page">
+      <div>
+        <p class="eyebrow">博客分类</p>
+        <h1>{category}</h1>
+      </div>
+    </div>
+
+    <div class="category-bar">
+      <a class="category-chip" href="/blog/">全部</a>
+      {categories.map((item) => (
+        <a class={`category-chip ${item === category ? 'active' : ''}`} href={`/blog/category/${categoryToSlug(item)}/`}>
+          {item}
+        </a>
+      ))}
+    </div>
+
+    <div class="entry-list">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+</BaseLayout>

@@ -4,15 +4,15 @@ import type { CollectionEntry } from 'astro:content';
 const { post } = Astro.props as { post: CollectionEntry<'blog'> };
 const date = post.data.pubDate.toLocaleDateString('zh-CN', {
   year: 'numeric',
-  month: 'short',
-  day: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
 });
 ---
 
-<article class="card post-card">
-  <div class="card__meta">
+<article class="entry-card">
+  <div class="entry-card__meta">
+    <span>{post.data.category}</span>
     <span>{date}</span>
-    <span>{post.data.tags.join(' · ')}</span>
   </div>
   <h3><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h3>
   <p>{post.data.description}</p>
