@@ -1,0 +1,36 @@
+---
+import type { AlertItem } from '../../utils/lab';
+
+interface Props {
+  title?: string;
+  items: AlertItem[];
+}
+
+const { title = '需要管理员注意的项', items } = Astro.props;
+---
+
+<section class="lab-panel">
+  <div class="lab-panel__header">
+    <div>
+      <p class="eyebrow">提醒</p>
+      <h2>{title}</h2>
+    </div>
+  </div>
+
+  {items.length ? (
+    <div class="lab-alert-list">
+      {items.map((item) => (
+        <article class={`lab-alert lab-alert--${item.level}`}>
+          <div class="lab-alert__title-row">
+            <h3>{item.title}</h3>
+            <span class="lab-alert__badge">{item.level}</span>
+          </div>
+          <p>{item.detail}</p>
+          {item.link ? <a class="text-link" href={item.link}>继续查看</a> : null}
+        </article>
+      ))}
+    </div>
+  ) : (
+    <p class="page-note">当前没有告警项。</p>
+  )}
+</section>

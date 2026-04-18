@@ -1,0 +1,109 @@
+{
+  "updated_at": "2026-04-18 12:53 CST",
+  "mode": "runtime-cluster + static-storage-traffic",
+  "metrics": [
+    {
+      "label": "在线节点",
+      "value": "4 / 5",
+      "note": "本项来自 SSH 远程采样。",
+      "tone": "teal"
+    },
+    {
+      "label": "忙碌 GPU",
+      "value": "11 / 17",
+      "note": "最近 5 分钟",
+      "tone": "amber"
+    },
+    {
+      "label": "总显存占用",
+      "value": "263.0 / 591.7 GiB",
+      "note": "来源于每台机器的 nvidia-smi 聚合。",
+      "tone": "slate"
+    },
+    {
+      "label": "总内存占用",
+      "value": "154.4 / 1383.5 GiB",
+      "note": "来源于各节点 /proc/meminfo。",
+      "tone": "teal"
+    },
+    {
+      "label": "本月外网流量",
+      "value": "58.4 / 90 GiB",
+      "note": "统计月份 2026-04",
+      "tone": "rose"
+    },
+    {
+      "label": "磁盘可回收",
+      "value": "400+ GiB",
+      "note": "这一项来自 diskwatch / 管理员清理候选。",
+      "tone": "amber"
+    }
+  ],
+  "alerts": [
+    {
+      "level": "warn",
+      "title": "A6000 主节点 当前已接近满卡",
+      "detail": "如果继续塞训练，短测评会更难插进去；后续适合直接做成显式的测评保留策略。",
+      "link": "/lab/cluster/"
+    },
+    {
+      "level": "info",
+      "title": "磁盘页已经有可操作的清理候选",
+      "detail": "当前页面列出了 5 个低风险或待复核项，可直接转成管理员按钮。",
+      "link": "/lab/storage/"
+    }
+  ],
+  "highlights": [
+    {
+      "title": "今日摘要",
+      "body": "A6000 仍然承担大显存训练主力，今天最值得关注的是如何给短测评保留可插空的生存空间。"
+    },
+    {
+      "title": "先做管理员真正会每天打开的页面",
+      "body": "总览、集群、磁盘、流量、日报周报这五页已经够覆盖你当前最真实的管理需求，先别为了酷炫图表把结构做得太重。"
+    },
+    {
+      "title": "公开站点和内网管理员版要分层",
+      "body": "同一套前端可以同时服务两种部署：GitHub Pages 放脱敏版，实验室服务器放完整版，这样既能保留项目可读性，也不会把内部细节直接公开。"
+    }
+  ],
+  "top_users": [
+    {
+      "name": "gaoyichen",
+      "focus": "当前在 5 张 GPU 上出现",
+      "note": "真实采样来自 nvidia-smi / ps 联合解析。"
+    },
+    {
+      "name": "wangzijing",
+      "focus": "当前在 3 张 GPU 上出现",
+      "note": "真实采样来自 nvidia-smi / ps 联合解析。"
+    },
+    {
+      "name": "caoyifan",
+      "focus": "当前在 2 张 GPU 上出现",
+      "note": "真实采样来自 nvidia-smi / ps 联合解析。"
+    }
+  ],
+  "top_nodes": [
+    {
+      "name": "A6000 主节点",
+      "focus": "8/8 张 GPU 忙，CPU 28.5%，RAM 99.8/755.3 GiB",
+      "note": "大显存训练 / 数据主仓"
+    },
+    {
+      "name": "3090 节点 107",
+      "focus": "3/4 张 GPU 忙，CPU 4.0%，RAM 26.6/251.5 GiB",
+      "note": "中等训练 / 测评补位"
+    },
+    {
+      "name": "RTX5000 节点",
+      "focus": "0/1 张 GPU 忙，CPU 1.9%，RAM 2.0/125.2 GiB",
+      "note": "登录 / 编译 / 小任务"
+    }
+  ],
+  "next_steps": [
+    "把 diskwatch 的真实输出接进 `/lab/storage/`，让增长热点和清理候选不再是示例数据。",
+    "把 labflow 的月度排行、异常峰值和本月临时放宽额度接进 `/lab/traffic/`。",
+    "给内网版准备定时采样 + 自动构建或客户端拉取机制，让页面持续刷新。"
+  ]
+}

@@ -1,0 +1,118 @@
+---
+import type { GpuCardData, NodeData } from '../../utils/lab';
+import { toPercent } from '../../utils/lab';
+
+interface Props {
+  node: NodeData;
+}
+
+const { node } = Astro.props;
+const gpuPercent = toPercent(node.gpu_mem_used_gb, node.gpu_mem_total_gb);
+const ramPercent = toPercent(node.ram_used_gb, node.ram_total_gb);
+const diskPercent = toPercent(node.disk_used_tb, node.disk_total_tb);
+const gpuCards: GpuCardData[] = node.gpus || [];
+---
+
+<article class="lab-node-card">
+  <div class="lab-node-card__header">
+    <div>
+      <p class="eyebrow">{node.role}</p>
+      <h2>{node.label}</h2>
+      <p class="lab-node-card__host">{node.host}</p>
+    </div>
+    <span class={`lab-status lab-status--${node.status}`}>{node.status}</span>
+  </div>
+
+  <div class="lab-node-card__grid">
+    <div class="lab-kpi">
+      <span>GPU</span>
+      <strong>{node.gpu_busy} / {node.gpu_count} 忙</strong>
+      <small>{node.gpu_model}</small>
+    </div>
+    <div class="lab-kpi">
+      <span>CPU</span>
+      <strong>{node.cpu_used_pct}%</strong>
+      <small>load {node.load_avg}</small>
+    </div>
+    <div class="lab-kpi">
+      <span>RAM</span>
+      <strong>{node.ram_used_gb} / {node.ram_total_gb} GiB</strong>
+      <small>{ramPercent}%</small>
+    </div>
+    <div class="lab-kpi">
+      <span>Disk</span>
+      <strong>{node.disk_used_tb} / {node.disk_total_tb} TiB</strong>
+      <small>{diskPercent}%</small>
+    </div>
+  </div>
+
+  <div class="lab-meter-group">
+    <div class="lab-meter">
+      <div class="lab-meter__label-row">
+        <span>显存占用</span>
+        <strong>{node.gpu_mem_used_gb} / {node.gpu_mem_total_gb} GiB</strong>
+      </div>
+      <div class="lab-meter__track"><span style={`width:${gpuPercent}%`}></span></div>
+    </div>
+    <div class="lab-meter">
+      <div class="lab-meter__label-row">
+        <span>内存占用</span>
+        <strong>{node.ram_used_gb} / {node.ram_total_gb} GiB</strong>
+      </div>
+      <div class="lab-meter__track"><span style={`width:${ramPercent}%`}></span></div>
+    </div>
+    <div class="lab-meter">
+      <div class="lab-meter__label-row">
+        <span>磁盘占用</span>
+        <strong>{node.disk_used_tb} / {node.disk_total_tb} TiB</strong>
+      </div>
+      <div class="lab-meter__track"><span style={`width:${diskPercent}%`}></span></div>
+    </div>
+  </div>
+
+  {gpuCards.length ? (
+    <div class="lab-gpu-grid">
+      {gpuCards.map((gpu) => {
+        const percent = toPercent(gpu.memory_used_gb, gpu.memory_total_gb);
+        return (
+          <article class={`lab-gpu-card ${gpu.busy ? 'is-busy' : 'is-idle'}`}>
+            <div class="lab-gpu-card__header">
+              <strong>GPU {gpu.index}</strong>
+              <span>{gpu.utilization_pct}%</span>
+            </div>
+            <p class="lab-gpu-card__meta">{gpu.memory_used_gb} / {gpu.memory_total_gb} GiB</p>
+            <div class="lab-meter__track"><span style={`width:${percent}%`}></span></div>
+            <p class="lab-gpu-card__users">{gpu.users.length ? gpu.users.join(' · ') : '当前空闲'}</p>
+            {gpu.top_processes.length ? (
+              <ul class="lab-gpu-card__processes">
+                {gpu.top_processes.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : null}
+          </article>
+        );
+      })}
+    </div>
+  ) : null}
+
+  <div class="lab-node-card__lists">
+    <div>
+      <h3>当前更适合跑什么</h3>
+      <ul>
+        {node.jobs.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h3>管理员备注</h3>
+      <ul>
+        {node.notes.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <section class="lab-node-card__footer">
+    <h3>最近采样到的进程摘要</h3>
+    <ul>
+      {node.top_processes.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+</article>

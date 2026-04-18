@@ -2,3 +2,5 @@ node_modules/
 dist/
 .astro/
 .DS_Store
+scripts/lab/cluster_hosts.local.json
+public/lab-data/.runtime/

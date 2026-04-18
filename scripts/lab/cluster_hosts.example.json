@@ -1,0 +1,45 @@
+{
+  "sample_window": "最近 5 分钟",
+  "notes": [
+    "把真实 SSH 凭据放到 cluster_hosts.local.json，不要提交到 Git。",
+    "如果目标机器不需要 sudo，就把 sudo_password 留空。",
+    "disk_paths 会按顺序尝试，找到第一个存在的挂载点后就用它做磁盘统计。"
+  ],
+  "nodes": [
+    {
+      "id": "a6000-main",
+      "label": "A6000 主节点",
+      "role": "大显存训练 / 数据主仓",
+      "host": "219.216.65.245",
+      "user": "amax",
+      "ssh_password": "<set>",
+      "sudo_password": "<set-or-empty>",
+      "disk_paths": ["/datas", "/data", "/"],
+      "jobs": [
+        "72 GiB 以上显存需求的训练优先放这里。",
+        "如果单卡还有空余显存，可以允许轻量测评插空。"
+      ],
+      "notes": [
+        "这台是大显存训练主力。",
+        "更适合做共享数据和共享模型的中心位。"
+      ]
+    },
+    {
+      "id": "3090-195",
+      "label": "3090 节点 195",
+      "role": "中等训练 / 高频测评池",
+      "host": "202.199.6.195",
+      "user": "amax",
+      "ssh_password": "<set>",
+      "sudo_password": "<set-or-empty>",
+      "disk_paths": ["/data", "/datas", "/"],
+      "jobs": [
+        "适合 1 到 2 卡训练。",
+        "也适合短时测评和验证任务。"
+      ],
+      "notes": [
+        "需要限制单用户独占全部 4 张卡。"
+      ]
+    }
+  ]
+}

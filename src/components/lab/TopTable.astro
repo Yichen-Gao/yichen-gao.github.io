@@ -1,0 +1,47 @@
+---
+interface Column {
+  key: string;
+  label: string;
+}
+
+interface Row {
+  [key: string]: string | number;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  columns: Column[];
+  rows: Row[];
+}
+
+const { eyebrow = '列表', title, description, columns, rows } = Astro.props;
+---
+
+<section class="lab-panel">
+  <div class="lab-panel__header">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+    </div>
+    {description ? <p class="lab-panel__description">{description}</p> : null}
+  </div>
+
+  <div class="lab-table-wrap">
+    <table class="lab-table">
+      <thead>
+        <tr>
+          {columns.map((column) => <th>{column.label}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            {columns.map((column) => <td>{row[column.key]}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

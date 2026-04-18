@@ -1,0 +1,124 @@
+---
+import LabLayout from '../../layouts/LabLayout.astro';
+import OverviewCard from '../../components/lab/OverviewCard.astro';
+import AlertList from '../../components/lab/AlertList.astro';
+import TopTable from '../../components/lab/TopTable.astro';
+import type { OverviewData } from '../../utils/lab';
+import { loadLabJson } from '../../utils/lab';
+
+const fallback: OverviewData = {
+  updated_at: '待接入真实数据',
+  mode: 'fallback',
+  metrics: [],
+  alerts: [],
+  highlights: [],
+  top_users: [],
+  top_nodes: [],
+  next_steps: [],
+};
+
+const overview = await loadLabJson<OverviewData>('overview.json', fallback);
+const topUserRows = overview.top_users.map((item) => ({ name: item.name, focus: item.focus, note: item.note }));
+const topNodeRows = overview.top_nodes.map((item) => ({ name: item.name, focus: item.focus, note: item.note }));
+
+const sections = [
+  {
+    title: '集群监控',
+    href: '/lab/cluster/',
+    body: '看每台机器的 GPU 忙闲、显存占用、CPU、RAM、磁盘和节点角色，先把训练卡、测评卡、登录节点的分工看清。',
+  },
+  {
+    title: '磁盘治理',
+    href: '/lab/storage/',
+    body: '接 diskwatch 的增长、清理候选和共享目录视图，后面可继续做一键隔离与一键清缓存。',
+  },
+  {
+    title: '流量管理',
+    href: '/lab/traffic/',
+    body: '接 labflow 的月度排行、软硬阈值、0-6 点免费窗口和异常用户跟踪。',
+  },
+  {
+    title: '日报周报',
+    href: '/lab/reports/',
+    body: '适合每天花 2 分钟看一遍，快速知道哪台最忙、谁在涨、哪里该收拾。',
+  },
+];
+---
+
+<LabLayout
+  title="实验室监控总览 | 高一辰"
+  description="实验室 GPU、磁盘、流量与日报周报的总览页。"
+  section="overview"
+  headline="把 GPU、磁盘和校园网流量收束到同一个面板里。"
+  intro="这一层先做展示骨架：上面是站点页面，下面的数据会逐步接到 labflow、diskwatch 和新的 GPU 采样器。你之后无论是看谁占卡、谁占磁盘，还是看哪台机器适合跑测评，都从这里进。"
+  updatedAt={overview.updated_at}
+>
+  <section class="lab-section-grid lab-section-grid--stats">
+    {overview.metrics.map((item) => (
+      <OverviewCard label={item.label} value={item.value} note={item.note} tone={item.tone} />
+    ))}
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <AlertList items={overview.alerts} />
+
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">路线</p>
+          <h2>这一版怎么用</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {overview.next_steps.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </section>
+
+  <section class="lab-entry-grid">
+    {sections.map((item) => (
+      <article class="lab-entry-card">
+        <p class="eyebrow">入口</p>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
+        <a class="text-link" href={item.href}>进入页面</a>
+      </article>
+    ))}
+  </section>
+
+  <section class="lab-entry-grid">
+    {overview.highlights.map((item) => (
+      <article class="lab-entry-card">
+        <p class="eyebrow">规划</p>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="关注用户"
+      title="当前最值得盯的几类用户"
+      description="这不是处罚名单，而是管理员最该先看的对象。"
+      columns={[
+        { key: 'name', label: '用户' },
+        { key: 'focus', label: '该看什么' },
+        { key: 'note', label: '备注' },
+      ]}
+      rows={topUserRows}
+    />
+
+    <TopTable
+      eyebrow="节点"
+      title="当前最值得盯的几台机器"
+      description="把分工和容量边界先在脑子里建立起来。"
+      columns={[
+        { key: 'name', label: '节点' },
+        { key: 'focus', label: '当前视角' },
+        { key: 'note', label: '备注' },
+      ]}
+      rows={topNodeRows}
+    />
+  </section>
+</LabLayout>

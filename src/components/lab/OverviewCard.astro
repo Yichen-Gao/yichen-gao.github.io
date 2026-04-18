@@ -1,0 +1,18 @@
+---
+import type { Tone } from '../../utils/lab';
+
+interface Props {
+  label: string;
+  value: string;
+  note: string;
+  tone?: Tone;
+}
+
+const { label, value, note, tone = 'slate' } = Astro.props;
+---
+
+<article class={`lab-stat-card tone-${tone}`}>
+  <p class="lab-stat-card__label">{label}</p>
+  <p class="lab-stat-card__value">{value}</p>
+  <p class="lab-stat-card__note">{note}</p>
+</article>

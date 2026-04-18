@@ -1,0 +1,118 @@
+---
+import LabLayout from '../../layouts/LabLayout.astro';
+import TopTable from '../../components/lab/TopTable.astro';
+import type { DailyReportData, WeeklyReportData } from '../../utils/lab';
+import { loadLabJson } from '../../utils/lab';
+
+const dailyFallback: DailyReportData = {
+  updated_at: '待接入真实数据',
+  date: '0000-00-00',
+  highlights: [],
+  anomalies: [],
+  actions: [],
+};
+const weeklyFallback: WeeklyReportData = {
+  updated_at: '待接入真实数据',
+  range: '0000-00-00 ~ 0000-00-00',
+  highlights: [],
+  decisions: [],
+  focus: [],
+};
+
+const daily = await loadLabJson<DailyReportData>('reports/daily.json', dailyFallback);
+const weekly = await loadLabJson<WeeklyReportData>('reports/weekly.json', weeklyFallback);
+const latestUpdate = daily.updated_at > weekly.updated_at ? daily.updated_at : weekly.updated_at;
+const dailyRows = daily.highlights.map((item, index) => ({
+  item: `D${index + 1}`,
+  summary: item,
+}));
+const weeklyRows = weekly.highlights.map((item, index) => ({
+  item: `W${index + 1}`,
+  summary: item,
+}));
+---
+
+<LabLayout
+  title="日报周报 | 高一辰"
+  description="实验室监控日报、周报与管理员行动列表。"
+  section="reports"
+  headline="日报周报要极简，不是把终端输出搬过来，而是帮你迅速做决定。"
+  intro="这一页是最后面那层“管理摘要”：把 GPU、磁盘、流量各自的原始监控压缩成可读的几句话。你每天扫一眼就知道今天该找谁、该清什么、该不该调度规则。"
+  updatedAt={latestUpdate}
+>
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="日报"
+      title={`今日摘要 · ${daily.date}`}
+      description="适合做成每天固定时间自动生成。"
+      columns={[
+        { key: 'item', label: '序号' },
+        { key: 'summary', label: '摘要' },
+      ]}
+      rows={dailyRows}
+    />
+
+    <TopTable
+      eyebrow="周报"
+      title={`本周摘要 · ${weekly.range}`}
+      description="适合做趋势和规则微调。"
+      columns={[
+        { key: 'item', label: '序号' },
+        { key: 'summary', label: '摘要' },
+      ]}
+      rows={weeklyRows}
+    />
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">异常</p>
+          <h2>今天需要额外留意</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {daily.anomalies.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">动作</p>
+          <h2>管理员下一步动作</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {daily.actions.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">决策</p>
+          <h2>周级别要不要调整规则</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {weekly.decisions.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">下周重点</p>
+          <h2>下一阶段继续补什么</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {weekly.focus.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </section>
+</LabLayout>

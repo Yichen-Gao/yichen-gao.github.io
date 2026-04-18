@@ -1,0 +1,128 @@
+{
+  "updated_at": "2026-04-18 11:43 CST",
+  "reclaimable_estimate": "400+ GiB",
+  "mountpoints": [
+    {
+      "name": "A6000 /datas",
+      "host": "219.216.65.245",
+      "used_tb": 30.6,
+      "total_tb": 37,
+      "note": "主仓库与共享模型最好集中放在这里，但也最需要严格做目录治理。"
+    },
+    {
+      "name": "3090-195 /data",
+      "host": "202.199.6.195",
+      "used_tb": 11.3,
+      "total_tb": 12,
+      "note": "本地盘压力中高，适合放运行中副本，不适合堆长期历史。"
+    },
+    {
+      "name": "3090-107 /data",
+      "host": "219.216.64.107",
+      "used_tb": 11.3,
+      "total_tb": 12,
+      "note": "最适合做缓存清理和过期目录治理的试验田。"
+    },
+    {
+      "name": "2080 /data",
+      "host": "219.216.65.178",
+      "used_tb": 4.9,
+      "total_tb": 8,
+      "note": "边缘计算节点，能放开发环境和小模型。"
+    },
+    {
+      "name": "RTX5000 /data",
+      "host": "219.216.64.60",
+      "used_tb": 1.3,
+      "total_tb": 3.5,
+      "note": "更适合登录、编译和准备环境，不建议放太多训练产物。"
+    }
+  ],
+  "cleanup_candidates": [
+    {
+      "name": "107:/data/zhangwen/.cache",
+      "path": "/data/zhangwen/.cache",
+      "size": "71 GiB",
+      "kind": "cache",
+      "risk": "low",
+      "action": "直接删缓存",
+      "reason": "已经确认是缓存，不碰项目主目录。"
+    },
+    {
+      "name": "107:/data/zhangyiqun/.cache",
+      "path": "/data/zhangyiqun/.cache",
+      "size": "71 GiB",
+      "kind": "cache",
+      "risk": "low",
+      "action": "直接删缓存",
+      "reason": "长期未清，清掉收益很高。"
+    },
+    {
+      "name": "195:/data/cmx/.cache",
+      "path": "/data/cmx/.cache",
+      "size": "21 GiB",
+      "kind": "cache",
+      "risk": "low",
+      "action": "直接删缓存",
+      "reason": "用户很久没在这台上活跃，优先清缓存最稳。"
+    },
+    {
+      "name": "245:/datas/longcanwu",
+      "path": "/datas/longcanwu",
+      "size": "1.3 GiB",
+      "kind": "orphan-home",
+      "risk": "review",
+      "action": "先隔离再看",
+      "reason": "目录 owner 与目录名不一致，看起来像历史遗留 home。"
+    },
+    {
+      "name": "245:/datas/username",
+      "path": "/datas/username",
+      "size": "16 KiB",
+      "kind": "placeholder",
+      "risk": "low",
+      "action": "可直接删",
+      "reason": "明显是占位目录，只剩初始 dotfiles。"
+    }
+  ],
+  "stale_accounts": [
+    {
+      "name": "guyu",
+      "scope": "2022 年后基本不活跃",
+      "note": "先清 `.cache` 和 `.vscode-server`，整目录删除仍然保守处理。"
+    },
+    {
+      "name": "zhanganran",
+      "scope": "可以继续清安装包和缓存",
+      "note": "项目目录和 conda env 不能直接一起删。"
+    },
+    {
+      "name": "temp_user",
+      "scope": "更像临时管理员测试号",
+      "note": "优先清 `.vscode-server`、`.cache`、临时压缩包。"
+    }
+  ],
+  "growth_hotspots": [
+    {
+      "name": "共享模型目录",
+      "scope": "谁都可能往里塞模型副本",
+      "note": "后面需要加“重复模型”识别，而不是只看总大小。"
+    },
+    {
+      "name": "用户 home 下的 `.conda` / `.cache`",
+      "scope": "最容易悄悄熵增",
+      "note": "适合做日报里的“你今天又涨了多少”提醒。"
+    },
+    {
+      "name": "3090 本地盘",
+      "scope": "容量小、增长快、最容易先爆",
+      "note": "策略上应把它当计算缓存层，而不是长期资产层。"
+    }
+  ],
+  "policies": [
+    "用户可以在自己的目录里自由工作，但页面要持续把占用可视化，而不是只在快满时才追着删。",
+    "缓存、VS Code Server、pip cache、无用安装包这类低风险项，应当常态化清，而不是临时大扫除。",
+    "历史遗留目录、owner 不一致目录、占位目录先隔离，不要一上来直接 `rm -rf`。",
+    "共享目录和个人目录必须在页面里区分，不然管理员会很容易误删公共资产。"
+  ]
+}

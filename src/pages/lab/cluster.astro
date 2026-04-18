@@ -1,0 +1,72 @@
+---
+import LabLayout from '../../layouts/LabLayout.astro';
+import OverviewCard from '../../components/lab/OverviewCard.astro';
+import NodePanel from '../../components/lab/NodePanel.astro';
+import TopTable from '../../components/lab/TopTable.astro';
+import type { ClusterData, NodeData } from '../../utils/lab';
+import { loadLabJson } from '../../utils/lab';
+
+const fallback: ClusterData = {
+  updated_at: '待接入真实数据',
+  sample_window: '5 min',
+  notes: [],
+  nodes: [],
+};
+
+const cluster = await loadLabJson<ClusterData>('cluster/latest.json', fallback);
+const onlineNodes = cluster.nodes.filter((node) => node.status !== 'offline').length;
+const busyGpus = cluster.nodes.reduce((sum, node) => sum + node.gpu_busy, 0);
+const totalGpus = cluster.nodes.reduce((sum, node) => sum + node.gpu_count, 0);
+const totalRamUsed = cluster.nodes.reduce((sum, node) => sum + node.ram_used_gb, 0);
+const totalRam = cluster.nodes.reduce((sum, node) => sum + node.ram_total_gb, 0);
+const nodeRows = cluster.nodes.map((node: NodeData) => ({
+  name: node.label,
+  focus: `${node.gpu_busy}/${node.gpu_count} 张 GPU 忙，RAM ${node.ram_used_gb}/${node.ram_total_gb} GiB`,
+  note: node.role,
+}));
+---
+
+<LabLayout
+  title="集群监控 | 高一辰"
+  description="实验室各节点的 GPU、CPU、内存、磁盘与角色视图。"
+  section="cluster"
+  headline="先把每台机器该承担什么角色，做成人人看得懂的集群面板。"
+  intro="这一页最核心的目标不是炫酷，而是让管理员能快速判断：大显存训练该去哪台，短测评还能不能插进去，哪台已经不该再塞任务了。后面真实接入后，每 1 到 5 分钟刷新一次就够用。"
+  updatedAt={cluster.updated_at}
+>
+  <section class="lab-section-grid lab-section-grid--stats">
+    <OverviewCard label="在线节点" value={`${onlineNodes} / ${cluster.nodes.length}`} note="主站点只展示聚合信息，真实部署时可加离线告警。" tone="teal" />
+    <OverviewCard label="忙碌 GPU" value={`${busyGpus} / ${totalGpus}`} note={`采样窗口 ${cluster.sample_window}`} tone="amber" />
+    <OverviewCard label="总内存占用" value={`${totalRamUsed} / ${totalRam} GiB`} note="后续可加 swap 与 load 预警。" tone="slate" />
+  </section>
+
+  <section class="lab-node-grid">
+    {cluster.nodes.map((node) => <NodePanel node={node} />)}
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="节点摘要"
+      title="节点分工建议"
+      description="后续可以直接把 Slurm 分区和这里的角色文案对齐。"
+      columns={[
+        { key: 'name', label: '节点' },
+        { key: 'focus', label: '现在的负载' },
+        { key: 'note', label: '建议角色' },
+      ]}
+      rows={nodeRows}
+    />
+
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">接线</p>
+          <h2>接真实数据时怎么接</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {cluster.notes.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </section>
+</LabLayout>

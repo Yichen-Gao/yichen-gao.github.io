@@ -1,0 +1,59 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/lab.css';
+
+interface Props {
+  title: string;
+  description: string;
+  section: string;
+  eyebrow?: string;
+  headline: string;
+  intro: string;
+  updatedAt?: string;
+}
+
+const sections = [
+  { key: 'overview', label: '总览', href: '/lab/' },
+  { key: 'cluster', label: '集群', href: '/lab/cluster/' },
+  { key: 'storage', label: '磁盘', href: '/lab/storage/' },
+  { key: 'traffic', label: '流量', href: '/lab/traffic/' },
+  { key: 'reports', label: '日报周报', href: '/lab/reports/' },
+];
+
+const {
+  title,
+  description,
+  section,
+  eyebrow = 'Lab Ops',
+  headline,
+  intro,
+  updatedAt,
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="shell lab-shell">
+    <div class="lab-hero">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{headline}</h1>
+        <p class="lab-hero__intro">{intro}</p>
+      </div>
+      <div class="lab-hero__meta">
+        <span>站内展示层</span>
+        <span>后续接 `labflow` / `diskwatch` / GPU 采样器</span>
+        {updatedAt ? <span>最近刷新：{updatedAt}</span> : <span>最近刷新：待接入真实数据</span>}
+      </div>
+    </div>
+
+    <nav class="lab-tabs" aria-label="实验室监控导航">
+      {sections.map((item) => (
+        <a class={item.key === section ? 'active' : ''} href={item.href}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <slot />
+  </section>
+</BaseLayout>

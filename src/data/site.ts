@@ -25,4 +25,5 @@ export const navigation = [
   { label: '博客', href: '/blog/' },
   { label: '简历 PDF', href: '/resume/' },
   { label: '联系', href: '/contact/' },
+  { label: '实验室', href: '/lab/' },
 ];

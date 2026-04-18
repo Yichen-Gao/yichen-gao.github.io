@@ -1,0 +1,110 @@
+---
+import LabLayout from '../../layouts/LabLayout.astro';
+import OverviewCard from '../../components/lab/OverviewCard.astro';
+import TopTable from '../../components/lab/TopTable.astro';
+import type { StorageData } from '../../utils/lab';
+import { loadLabJson } from '../../utils/lab';
+
+const fallback: StorageData = {
+  updated_at: '待接入真实数据',
+  reclaimable_estimate: '0 GiB',
+  mountpoints: [],
+  cleanup_candidates: [],
+  stale_accounts: [],
+  growth_hotspots: [],
+  policies: [],
+};
+
+const storage = await loadLabJson<StorageData>('storage/latest.json', fallback);
+const mountRows = storage.mountpoints.map((item) => ({
+  name: item.name,
+  scope: `${item.used_tb} / ${item.total_tb} TiB`,
+  note: item.note,
+}));
+const staleRows = storage.stale_accounts.map((item) => ({ name: item.name, scope: item.scope, note: item.note }));
+const hotspotRows = storage.growth_hotspots.map((item) => ({ name: item.name, scope: item.scope, note: item.note }));
+const cleanupRows = storage.cleanup_candidates.map((item) => ({
+  name: item.name,
+  scope: `${item.size} · ${item.action}`,
+  note: `${item.reason}（${item.path}）`,
+}));
+---
+
+<LabLayout
+  title="磁盘监控 | 高一辰"
+  description="实验室磁盘占用、增长热点、清理候选与目录治理。"
+  section="storage"
+  headline="磁盘不是等快满了再删，而是把增长、缓存和历史遗留常态化地看见。"
+  intro="这一页直接对接 diskwatch 的价值最大。重点不是给每个人硬限额，而是让管理员知道哪里在涨、哪些目录只是缓存、哪些是共享资产、哪些更像毕业生残留。"
+  updatedAt={storage.updated_at}
+>
+  <section class="lab-section-grid lab-section-grid--stats">
+    <OverviewCard label="可回收空间" value={storage.reclaimable_estimate} note="这一项适合做成管理员一键清缓存的收益预估。" tone="teal" />
+    <OverviewCard label="挂载点数" value={String(storage.mountpoints.length)} note="后续可以分 A6000 大盘、本地 3090 盘和共享目录看。" tone="amber" />
+    <OverviewCard label="候选清理项" value={String(storage.cleanup_candidates.length)} note="只把低风险项放进这一层，整目录删除仍然保守处理。" tone="rose" />
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="挂载点"
+      title="主要存储位点"
+      description="后面可继续加 24h / 7d 增长趋势。"
+      columns={[
+        { key: 'name', label: '位置' },
+        { key: 'scope', label: '当前占用' },
+        { key: 'note', label: '说明' },
+      ]}
+      rows={mountRows}
+    />
+
+    <TopTable
+      eyebrow="清理候选"
+      title="先删这些比删用户项目更稳"
+      description="保留了路径信息，方便后面直接接管理员操作按钮。"
+      columns={[
+        { key: 'name', label: '对象' },
+        { key: 'scope', label: '建议动作' },
+        { key: 'note', label: '判断依据' },
+      ]}
+      rows={cleanupRows}
+    />
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="长期不活跃"
+      title="适合继续深挖的账号"
+      description="这批先做隔离、缓存清理和历史留痕。"
+      columns={[
+        { key: 'name', label: '账号' },
+        { key: 'scope', label: '现在看什么' },
+        { key: 'note', label: '备注' },
+      ]}
+      rows={staleRows}
+    />
+
+    <TopTable
+      eyebrow="增长热点"
+      title="最近最值得盯的增长点"
+      description="后面接上时序数据之后，这块会比一次性清理更重要。"
+      columns={[
+        { key: 'name', label: '路径/范围' },
+        { key: 'scope', label: '为什么看它' },
+        { key: 'note', label: '备注' },
+      ]}
+      rows={hotspotRows}
+    />
+  </section>
+
+  <section class="lab-panel">
+    <div class="lab-panel__header">
+      <div>
+        <p class="eyebrow">治理规则</p>
+        <h2>建议长期固定下来的几条规则</h2>
+      </div>
+    </div>
+    <ul class="lab-muted-list">
+      {storage.policies.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+</LabLayout>

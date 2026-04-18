@@ -1,0 +1,95 @@
+---
+import LabLayout from '../../layouts/LabLayout.astro';
+import OverviewCard from '../../components/lab/OverviewCard.astro';
+import AlertList from '../../components/lab/AlertList.astro';
+import TopTable from '../../components/lab/TopTable.astro';
+import type { TrafficData } from '../../utils/lab';
+import { loadLabJson } from '../../utils/lab';
+
+const fallback: TrafficData = {
+  updated_at: '待接入真实数据',
+  month: '0000-00',
+  quota_gb: 0,
+  used_gb: 0,
+  hard_limit_gb: 0,
+  ignored_window: '00:00-06:00',
+  alerts: [],
+  users: [],
+  spikes: [],
+  rules: [],
+};
+
+const traffic = await loadLabJson<TrafficData>('traffic/latest.json', fallback);
+const remaining = Math.max(0, traffic.quota_gb - traffic.used_gb);
+const userRows = traffic.users.map((item) => ({
+  user: item.user,
+  used: `${item.used_gb} GiB`,
+  status: item.status,
+  note: item.note,
+}));
+const spikeRows = traffic.spikes.map((item) => ({
+  time: item.time,
+  user: item.user,
+  size: item.size,
+  note: item.note,
+}));
+---
+
+<LabLayout
+  title="流量监控 | 高一辰"
+  description="校园网流量配额、月度排行、硬限制和异常峰值。"
+  section="traffic"
+  headline="把外网流量做成真正可管理的配额系统，而不是月底才发现谁把额度冲没了。"
+  intro="这里直接承接 labflow：看本月累计、用户排行、异常峰值、0 到 6 点免费窗口，以及谁已经接近或超过个人上限。页面文案会尽量按管理员思维来写，而不是让你记一堆命令。"
+  updatedAt={traffic.updated_at}
+>
+  <section class="lab-section-grid lab-section-grid--stats">
+    <OverviewCard label="本月总量" value={`${traffic.used_gb} / ${traffic.quota_gb} GiB`} note={`统计月份 ${traffic.month}`} tone="teal" />
+    <OverviewCard label="剩余额度" value={`${remaining} GiB`} note={`每天 ${traffic.ignored_window} 不计入额度`} tone="amber" />
+    <OverviewCard label="个人硬限制" value={`${traffic.hard_limit_gb} GiB`} note="后面可以叠加本月临时放行额度。" tone="rose" />
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <AlertList title="本月流量提醒" items={traffic.alerts} />
+
+    <section class="lab-panel">
+      <div class="lab-panel__header">
+        <div>
+          <p class="eyebrow">规则</p>
+          <h2>页面里直接把规则说清楚</h2>
+        </div>
+      </div>
+      <ul class="lab-muted-list">
+        {traffic.rules.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </section>
+
+  <section class="lab-grid lab-grid--split">
+    <TopTable
+      eyebrow="用户排行"
+      title="本月最需要盯的用户"
+      description="默认从大到小排，方便直接看谁最可能触发限制。"
+      columns={[
+        { key: 'user', label: '用户' },
+        { key: 'used', label: '本月累计' },
+        { key: 'status', label: '状态' },
+        { key: 'note', label: '备注' },
+      ]}
+      rows={userRows}
+    />
+
+    <TopTable
+      eyebrow="峰值"
+      title="异常峰值样式"
+      description="后续这里可以直接连到那一刻附近的命令和进程快照。"
+      columns={[
+        { key: 'time', label: '时间' },
+        { key: 'user', label: '用户' },
+        { key: 'size', label: '峰值' },
+        { key: 'note', label: '判断' },
+      ]}
+      rows={spikeRows}
+    />
+  </section>
+</LabLayout>
