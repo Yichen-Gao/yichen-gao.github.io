@@ -11,6 +11,18 @@ const gpuPercent = toPercent(node.gpu_mem_used_gb, node.gpu_mem_total_gb);
 const ramPercent = toPercent(node.ram_used_gb, node.ram_total_gb);
 const diskPercent = toPercent(node.disk_used_tb, node.disk_total_tb);
 const gpuCards: GpuCardData[] = node.gpus || [];
+
+const statusLabel: Record<string, string> = {
+  online: '在线',
+  degraded: '紧张',
+  offline: '离线',
+};
+
+function meterTone(percent: number): 'ok' | 'warn' | 'critical' {
+  if (percent >= 85) return 'critical';
+  if (percent >= 65) return 'warn';
+  return 'ok';
+}
 ---
 
 <article class="lab-node-card">
@@ -20,7 +32,7 @@ const gpuCards: GpuCardData[] = node.gpus || [];
       <h2>{node.label}</h2>
       <p class="lab-node-card__host">{node.host}</p>
     </div>
-    <span class={`lab-status lab-status--${node.status}`}>{node.status}</span>
+    <span class={`lab-status lab-status--${node.status}`}>{statusLabel[node.status] ?? node.status}</span>
   </div>
 
   <div class="lab-node-card__grid">
@@ -52,21 +64,27 @@ const gpuCards: GpuCardData[] = node.gpus || [];
         <span>显存占用</span>
         <strong>{node.gpu_mem_used_gb} / {node.gpu_mem_total_gb} GiB</strong>
       </div>
-      <div class="lab-meter__track"><span style={`width:${gpuPercent}%`}></span></div>
+      <div class="lab-meter__track">
+        <span class={`lab-meter__fill lab-meter__fill--${meterTone(gpuPercent)}`} style={`width:${gpuPercent}%`}></span>
+      </div>
     </div>
     <div class="lab-meter">
       <div class="lab-meter__label-row">
         <span>内存占用</span>
         <strong>{node.ram_used_gb} / {node.ram_total_gb} GiB</strong>
       </div>
-      <div class="lab-meter__track"><span style={`width:${ramPercent}%`}></span></div>
+      <div class="lab-meter__track">
+        <span class={`lab-meter__fill lab-meter__fill--${meterTone(ramPercent)}`} style={`width:${ramPercent}%`}></span>
+      </div>
     </div>
     <div class="lab-meter">
       <div class="lab-meter__label-row">
         <span>磁盘占用</span>
         <strong>{node.disk_used_tb} / {node.disk_total_tb} TiB</strong>
       </div>
-      <div class="lab-meter__track"><span style={`width:${diskPercent}%`}></span></div>
+      <div class="lab-meter__track">
+        <span class={`lab-meter__fill lab-meter__fill--${meterTone(diskPercent)}`} style={`width:${diskPercent}%`}></span>
+      </div>
     </div>
   </div>
 
@@ -81,7 +99,9 @@ const gpuCards: GpuCardData[] = node.gpus || [];
               <span>{gpu.utilization_pct}%</span>
             </div>
             <p class="lab-gpu-card__meta">{gpu.memory_used_gb} / {gpu.memory_total_gb} GiB</p>
-            <div class="lab-meter__track"><span style={`width:${percent}%`}></span></div>
+            <div class="lab-meter__track">
+              <span class={`lab-meter__fill lab-meter__fill--${meterTone(percent)}`} style={`width:${percent}%`}></span>
+            </div>
             <p class="lab-gpu-card__users">{gpu.users.length ? gpu.users.join(' · ') : '当前空闲'}</p>
             {gpu.top_processes.length ? (
               <ul class="lab-gpu-card__processes">

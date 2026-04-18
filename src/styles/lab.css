@@ -67,10 +67,8 @@
 }
 
 .lab-topbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.5rem;
+  position: relative;
+  display: block;
   padding: 0.55rem 0.8rem;
   background:
     linear-gradient(180deg, rgba(116, 216, 255, 0.06), transparent 100%),
@@ -86,18 +84,30 @@
 .lab-topbar__headline-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
+}
+
+.lab-topbar__title {
+  max-width: 62rem;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .lab-topbar__intro {
   margin: 0.1rem 0 0;
-  max-width: 52ch;
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
   color: var(--lab-muted);
   font-size: 0.84rem;
   line-height: 1.35;
 }
 
 .lab-topbar__meta {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.8rem;
   display: flex;
   justify-content: end;
 }
@@ -458,14 +468,27 @@
   overflow: hidden;
   height: 10px;
   border-radius: 999px;
-  background: #182735;
+  background: #1a2836;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .lab-meter__track span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #3abff8, #87d96c 70%, #f2c46b);
+  background: var(--lab-green);
+}
+
+.lab-meter__fill--ok {
+  background: #72da7d !important;
+}
+
+.lab-meter__fill--warn {
+  background: #e7bd59 !important;
+}
+
+.lab-meter__fill--critical {
+  background: #e36b80 !important;
 }
 
 .lab-node-card__lists {
@@ -658,6 +681,12 @@
   .lab-topbar {
     grid-template-columns: 1fr;
   }
+
+  .lab-topbar__meta {
+    position: static;
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
 }
 
 @media (max-width: 720px) {
@@ -685,6 +714,19 @@
     grid-template-columns: 1fr;
     display: grid;
   }
+
+  .lab-topbar__title {
+    text-align: left;
+  }
+
+  .lab-topbar__headline-row {
+    justify-content: start;
+  }
+
+  .lab-topbar__intro {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 
@@ -698,15 +740,16 @@
   padding: 0.8rem;
   border: 1px solid var(--lab-line);
   border-radius: 14px;
-  background: var(--lab-surface-soft);
+  background: #122031;
 }
 
 .lab-gpu-card.is-busy {
-  background: linear-gradient(180deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.98));
+  border-color: rgba(139, 227, 255, 0.26);
+  background: linear-gradient(180deg, rgba(139, 227, 255, 0.08), #122031 88%);
 }
 
 .lab-gpu-card.is-idle {
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.12), rgba(255, 255, 255, 0.98));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), #122031 88%);
 }
 
 .lab-gpu-card__header {
@@ -726,7 +769,7 @@
 .lab-gpu-card__users,
 .lab-gpu-card__processes li,
 .lab-node-card__footer li {
-  color: var(--lab-muted);
+  color: #c4d2dc;
 }
 
 .lab-gpu-card__meta,
