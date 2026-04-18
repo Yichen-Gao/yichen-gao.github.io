@@ -31,22 +31,25 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} bodyClass="page--lab" hideHeader={true} hideFooter={true}>
   <section class="shell lab-shell">
-    <div class="lab-hero">
-      <div>
+    <header class="lab-topbar">
+      <div class="lab-topbar__title">
         <p class="eyebrow">{eyebrow}</p>
-        <h1>{headline}</h1>
-        <p class="lab-hero__intro">{intro}</p>
+        <div class="lab-topbar__headline-row">
+          <h1>{headline}</h1>
+          <span class="lab-topbar__badge">管理员视角</span>
+        </div>
+        <p class="lab-topbar__intro">{intro}</p>
       </div>
-      <div class="lab-hero__meta">
-        <span>站内展示层</span>
-        <span>后续接 `labflow` / `diskwatch` / GPU 采样器</span>
+      <div class="lab-topbar__meta">
+        <span>实验室统一监控页</span>
+        <span>GPU / 流量 / 磁盘 / 日报</span>
         {updatedAt ? <span>最近刷新：{updatedAt}</span> : <span>最近刷新：待接入真实数据</span>}
       </div>
-    </div>
+    </header>
 
-    <nav class="lab-tabs" aria-label="实验室监控导航">
+    <nav class="lab-tabs lab-tabs--admin" aria-label="实验室监控导航">
       {sections.map((item) => (
         <a class={item.key === section ? 'active' : ''} href={item.href}>
           {item.label}

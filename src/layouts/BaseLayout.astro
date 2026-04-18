@@ -7,9 +7,18 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
+  bodyClass?: string;
+  hideHeader?: boolean;
+  hideFooter?: boolean;
 }
 
-const { title = site.title, description = site.description } = Astro.props;
+const {
+  title = site.title,
+  description = site.description,
+  bodyClass = '',
+  hideHeader = false,
+  hideFooter = false,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
 ---
 
@@ -28,12 +37,12 @@ const canonical = new URL(Astro.url.pathname, site.url).toString();
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
-  <body>
+  <body class={bodyClass}>
     <div class="page-bg"></div>
-    <Header currentPath={Astro.url.pathname} />
+    {!hideHeader && <Header currentPath={Astro.url.pathname} />}
     <main>
       <slot />
     </main>
-    <Footer />
+    {!hideFooter && <Footer />}
   </body>
 </html>
