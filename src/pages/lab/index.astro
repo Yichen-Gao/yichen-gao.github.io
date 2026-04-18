@@ -52,32 +52,12 @@ const trafficStatusLabel: Record<string, string> = {
   blocked: '已封',
 };
 
-const nodes = [...cluster.nodes].sort((a, b) => {
-  const statusRank = { degraded: 2, online: 1, offline: 0 };
-  const rankDiff = (statusRank[b.status] ?? 0) - (statusRank[a.status] ?? 0);
-  if (rankDiff !== 0) return rankDiff;
-  return b.gpu_busy - a.gpu_busy;
-});
-
-const onlineNodeCount = nodes.filter((item) => item.status !== 'offline').length;
-const totalGpu = nodes.reduce((sum, item) => sum + item.gpu_count, 0);
-const busyGpu = nodes.reduce((sum, item) => sum + item.gpu_busy, 0);
-const totalGpuMemUsed = nodes.reduce((sum, item) => sum + item.gpu_mem_used_gb, 0);
-const totalGpuMem = nodes.reduce((sum, item) => sum + item.gpu_mem_total_gb, 0);
-const totalRamUsed = nodes.reduce((sum, item) => sum + item.ram_used_gb, 0);
-const totalRam = nodes.reduce((sum, item) => sum + item.ram_total_gb, 0);
-const trafficRemaining = Math.max(0, traffic.quota_gb - traffic.used_gb);
-
-const summaryItems = [
-  { label: '在线节点', value: `${onlineNodeCount}/${nodes.length}` },
-  { label: '忙碌 GPU', value: `${busyGpu}/${totalGpu}` },
-  { label: '显存占用', value: `${fmt(totalGpuMemUsed)} / ${fmt(totalGpuMem)} GiB` },
-  { label: '内存占用', value: `${fmt(totalRamUsed)} / ${fmt(totalRam)} GiB` },
-  { label: '本月流量', value: `${fmt(traffic.used_gb)} / ${fmt(traffic.quota_gb, 0)} GiB` },
-  { label: '剩余流量', value: `${fmt(trafficRemaining)} GiB` },
-  { label: '单人硬限制', value: `${fmt(traffic.hard_limit_gb, 0)} GiB` },
-  { label: '可回收空间', value: storage.reclaimable_estimate },
-];
+const trafficStatusTone: Record<string, string> = {
+  ok: 'info',
+  watch: 'warn',
+  limit: 'critical',
+  blocked: 'critical',
+};
 
 const mounts = [...storage.mountpoints]
   .map((item) => ({
@@ -86,9 +66,55 @@ const mounts = [...storage.mountpoints]
   }))
   .sort((a, b) => b.percent - a.percent);
 
+const nodes = [...cluster.nodes].sort((a, b) => {
+  const scoreA = toPercent(a.disk_used_tb, a.disk_total_tb) * 1000 + a.gpu_busy * 10 + a.cpu_used_pct;
+  const scoreB = toPercent(b.disk_used_tb, b.disk_total_tb) * 1000 + b.gpu_busy * 10 + b.cpu_used_pct;
+  return scoreB - scoreA;
+});
+
 const topTrafficUsers = [...traffic.users].sort((a, b) => b.used_gb - a.used_gb).slice(0, 8);
 const recentSpikes = traffic.spikes.slice(0, 6);
 const cleanupCandidates = storage.cleanup_candidates.slice(0, 8);
+
+const onlineNodeCount = nodes.filter((item) => item.status !== 'offline').length;
+const totalGpu = nodes.reduce((sum, item) => sum + item.gpu_count, 0);
+const busyGpu = nodes.reduce((sum, item) => sum + item.gpu_busy, 0);
+const totalGpuMemUsed = nodes.reduce((sum, item) => sum + item.gpu_mem_used_gb, 0);
+const totalGpuMem = nodes.reduce((sum, item) => sum + item.gpu_mem_total_gb, 0);
+const trafficRemaining = Math.max(0, traffic.quota_gb - traffic.used_gb);
+
+const summaryItems = [
+  ...mounts.slice(0, 3).map((item) => ({
+    label: item.name,
+    value: `${item.percent}%`,
+    note: `${fmt(item.used_tb)} / ${fmt(item.total_tb)} TB`,
+  })),
+  {
+    label: '本月流量',
+    value: `${fmt(traffic.used_gb)} / ${fmt(traffic.quota_gb, 0)} GiB`,
+    note: traffic.month,
+  },
+  {
+    label: '剩余流量',
+    value: `${fmt(trafficRemaining)} GiB`,
+    note: `${traffic.ignored_window} 不计费`,
+  },
+  {
+    label: '单人硬限制',
+    value: `${fmt(traffic.hard_limit_gb, 0)} GiB`,
+    note: '月内可放宽',
+  },
+  {
+    label: '忙碌 GPU',
+    value: `${busyGpu}/${totalGpu}`,
+    note: `${onlineNodeCount}/${nodes.length} 节点在线`,
+  },
+  {
+    label: '显存总占用',
+    value: `${fmt(totalGpuMemUsed)} / ${fmt(totalGpuMem)} GiB`,
+    note: cluster.sample_window,
+  },
+];
 ---
 
 <LabLayout
@@ -96,201 +122,186 @@ const cleanupCandidates = storage.cleanup_candidates.slice(0, 8);
   description="实验室 GPU、磁盘与流量的高密度总览页。"
   section="overview"
   headline="实验室监控总览"
-  intro="只放当前最有用的原始指标，不额外做解释。"
+  intro="磁盘、流量、节点原始指标总览。"
   updatedAt={cluster.updated_at}
 >
-  <section class="lab-summary-strip">
+  <section class="lab-summary-strip lab-summary-strip--tight">
     {summaryItems.map((item) => (
       <article class="lab-summary-item">
         <span>{item.label}</span>
         <strong>{item.value}</strong>
+        <small>{item.note}</small>
       </article>
     ))}
   </section>
 
-  <section class="lab-core-grid">
-    <section class="lab-panel lab-panel--dense">
-      <div class="lab-panel__header">
+  <section class="lab-priority-grid">
+    <section class="lab-panel lab-panel--dense lab-panel--terminal">
+      <div class="lab-panel__header lab-panel__header--tight">
         <div>
-          <p class="eyebrow">节点</p>
-          <h2>节点总览</h2>
-        </div>
-        <a class="text-link" href="/lab/cluster/">完整页</a>
-      </div>
-
-      <div class="lab-table-wrap">
-        <table class="lab-table lab-table--dense">
-          <thead>
-            <tr>
-              <th>节点</th>
-              <th>状态</th>
-              <th>GPU</th>
-              <th>显存</th>
-              <th>CPU</th>
-              <th>RAM</th>
-              <th>磁盘</th>
-              <th>当前进程</th>
-            </tr>
-          </thead>
-          <tbody>
-            {nodes.map((node) => (
-              <tr>
-                <td>
-                  <div class="lab-cell-title">{node.label}</div>
-                  <div class="lab-cell-sub">{node.role}</div>
-                </td>
-                <td>
-                  <span class={`lab-pill lab-pill--${node.status === 'online' ? 'info' : node.status === 'degraded' ? 'warn' : 'critical'}`}>
-                    {nodeStatusLabel[node.status] ?? node.status}
-                  </span>
-                </td>
-                <td>{node.gpu_busy}/{node.gpu_count}</td>
-                <td>{fmt(node.gpu_mem_used_gb)} / {fmt(node.gpu_mem_total_gb)} GiB</td>
-                <td>{fmt(node.cpu_used_pct)}%</td>
-                <td>{fmt(node.ram_used_gb)} / {fmt(node.ram_total_gb)} GiB</td>
-                <td>{fmt(node.disk_used_tb)} / {fmt(node.disk_total_tb)} TB · {toPercent(node.disk_used_tb, node.disk_total_tb)}%</td>
-                <td class="lab-table__wide">{node.top_processes?.[0] ?? '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="lab-side-stack">
-      <section class="lab-panel lab-panel--dense">
-        <div class="lab-panel__header">
-          <div>
-            <p class="eyebrow">流量</p>
-            <h2>本月排行</h2>
-          </div>
-          <a class="text-link" href="/lab/traffic/">完整页</a>
-        </div>
-
-        <div class="lab-table-wrap">
-          <table class="lab-table lab-table--dense">
-            <thead>
-              <tr>
-                <th>用户</th>
-                <th>用量</th>
-                <th>状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topTrafficUsers.map((item) => (
-                <tr>
-                  <td>{item.user}</td>
-                  <td>{fmt(item.used_gb)} GiB</td>
-                  <td>
-                    <span class={`lab-pill lab-pill--${item.status === 'ok' ? 'info' : item.status === 'watch' ? 'warn' : 'critical'}`}>
-                      {trafficStatusLabel[item.status] ?? item.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="lab-panel lab-panel--dense">
-        <div class="lab-panel__header">
-          <div>
-            <p class="eyebrow">峰值</p>
-            <h2>最近流量峰值</h2>
-          </div>
-        </div>
-
-        <div class="lab-table-wrap">
-          <table class="lab-table lab-table--dense">
-            <thead>
-              <tr>
-                <th>时间</th>
-                <th>用户</th>
-                <th>峰值</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentSpikes.map((item) => (
-                <tr>
-                  <td>{item.time}</td>
-                  <td>{item.user}</td>
-                  <td>{item.size}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </section>
-
-  <section class="lab-core-grid lab-core-grid--bottom">
-    <section class="lab-panel lab-panel--dense">
-      <div class="lab-panel__header">
-        <div>
-          <p class="eyebrow">磁盘</p>
-          <h2>挂载点占用</h2>
+          <p class="eyebrow">Disk</p>
+          <h2>磁盘占用</h2>
         </div>
         <a class="text-link" href="/lab/storage/">完整页</a>
       </div>
 
-      <div class="lab-table-wrap">
-        <table class="lab-table lab-table--dense">
-          <thead>
-            <tr>
-              <th>位置</th>
-              <th>已用 / 总量</th>
-              <th>占用</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mounts.map((item) => (
+      <div class="lab-dense-split">
+        <div class="lab-table-wrap">
+          <table class="lab-table lab-table--dense lab-table--terminal">
+            <thead>
               <tr>
-                <td>
-                  <div class="lab-cell-title">{item.name}</div>
-                  <div class="lab-cell-sub">{item.host}</div>
-                </td>
-                <td>{fmt(item.used_tb)} / {fmt(item.total_tb)} TB</td>
-                <td>{item.percent}%</td>
+                <th>挂载点</th>
+                <th>主机</th>
+                <th>已用 / 总量</th>
+                <th>占用</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+            </thead>
+            <tbody>
+              {mounts.map((item) => (
+                <tr>
+                  <td>{item.name}</td>
+                  <td>{item.host}</td>
+                  <td>{fmt(item.used_tb)} / {fmt(item.total_tb)} TB</td>
+                  <td class={item.percent >= 95 ? 'lab-number-critical' : item.percent >= 85 ? 'lab-number-warn' : 'lab-number-ok'}>{item.percent}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-    <section class="lab-panel lab-panel--dense">
-      <div class="lab-panel__header">
-        <div>
-          <p class="eyebrow">清理</p>
-          <h2>可清理项</h2>
+        <div class="lab-table-wrap">
+          <table class="lab-table lab-table--dense lab-table--terminal">
+            <thead>
+              <tr>
+                <th>可清理项</th>
+                <th>大小</th>
+                <th>动作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cleanupCandidates.map((item) => (
+                <tr>
+                  <td>
+                    <div class="lab-cell-title">{item.name}</div>
+                    <div class="lab-cell-sub">{item.path}</div>
+                  </td>
+                  <td>{item.size}</td>
+                  <td>{item.action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
+    </section>
+
+    <section class="lab-panel lab-panel--dense lab-panel--terminal lab-traffic-panel">
+      <div class="lab-panel__header lab-panel__header--tight">
+        <div>
+          <p class="eyebrow">Labflow</p>
+          <h2>流量监控</h2>
+        </div>
+        <a class="text-link" href="/lab/traffic/">完整页</a>
+      </div>
+
+      <div class="lab-traffic-head">
+        <div><span>Month</span><strong>{traffic.month}</strong></div>
+        <div><span>Used</span><strong>{fmt(traffic.used_gb)} / {fmt(traffic.quota_gb, 0)} GiB</strong></div>
+        <div><span>Remain</span><strong>{fmt(trafficRemaining)} GiB</strong></div>
+        <div><span>Free</span><strong>{traffic.ignored_window}</strong></div>
+        <div><span>Limit</span><strong>{fmt(traffic.hard_limit_gb, 0)} GiB</strong></div>
+      </div>
 
       <div class="lab-table-wrap">
-        <table class="lab-table lab-table--dense">
+        <table class="lab-table lab-table--dense lab-table--terminal lab-table--mono">
           <thead>
             <tr>
-              <th>目录</th>
-              <th>大小</th>
-              <th>动作</th>
+              <th>#</th>
+              <th>用户</th>
+              <th>用量</th>
+              <th>状态</th>
             </tr>
           </thead>
           <tbody>
-            {cleanupCandidates.map((item) => (
+            {topTrafficUsers.map((item, index) => (
               <tr>
+                <td>{String(index + 1).padStart(2, '0')}</td>
+                <td>{item.user}</td>
+                <td>{fmt(item.used_gb)} GiB</td>
                 <td>
-                  <div class="lab-cell-title">{item.name}</div>
-                  <div class="lab-cell-sub">{item.path}</div>
+                  <span class={`lab-pill lab-pill--${trafficStatusTone[item.status] ?? 'info'}`}>
+                    {trafficStatusLabel[item.status] ?? item.status}
+                  </span>
                 </td>
-                <td>{item.size}</td>
-                <td>{item.action}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <div class="lab-traffic-spikes">
+        {recentSpikes.map((item) => (
+          <div class="lab-traffic-spikes__row">
+            <span>{item.time}</span>
+            <strong>{item.user}</strong>
+            <em>{item.size}</em>
+          </div>
+        ))}
+      </div>
     </section>
+  </section>
+
+  <section class="lab-panel lab-panel--dense lab-panel--terminal">
+    <div class="lab-panel__header lab-panel__header--tight">
+      <div>
+        <p class="eyebrow">Cluster</p>
+        <h2>节点总览</h2>
+      </div>
+      <a class="text-link" href="/lab/cluster/">完整页</a>
+    </div>
+
+    <div class="lab-table-wrap">
+      <table class="lab-table lab-table--dense lab-table--terminal lab-table--mono lab-node-grid-table">
+        <thead>
+          <tr>
+            <th>节点</th>
+            <th>状态</th>
+            <th>磁盘</th>
+            <th>GPU</th>
+            <th>显存</th>
+            <th>CPU</th>
+            <th>RAM</th>
+            <th>进程</th>
+          </tr>
+        </thead>
+        <tbody>
+          {nodes.map((node) => (
+            <tr>
+              <td>
+                <div class="lab-cell-title">{node.label}</div>
+                <div class="lab-cell-sub">{node.role}</div>
+              </td>
+              <td>
+                <span class={`lab-pill lab-pill--${node.status === 'online' ? 'info' : node.status === 'degraded' ? 'warn' : 'critical'}`}>
+                  {nodeStatusLabel[node.status] ?? node.status}
+                </span>
+              </td>
+              <td class={toPercent(node.disk_used_tb, node.disk_total_tb) >= 95 ? 'lab-number-critical' : toPercent(node.disk_used_tb, node.disk_total_tb) >= 85 ? 'lab-number-warn' : 'lab-number-ok'}>
+                {fmt(node.disk_used_tb)} / {fmt(node.disk_total_tb)} TB
+                <div class="lab-cell-sub">{toPercent(node.disk_used_tb, node.disk_total_tb)}%</div>
+              </td>
+              <td>{node.gpu_busy}/{node.gpu_count}</td>
+              <td>
+                {fmt(node.gpu_mem_used_gb)} / {fmt(node.gpu_mem_total_gb)} GiB
+                <div class="lab-cell-sub">{node.gpu_model}</div>
+              </td>
+              <td>{fmt(node.cpu_used_pct)}%</td>
+              <td>{fmt(node.ram_used_gb)} / {fmt(node.ram_total_gb)} GiB</td>
+              <td class="lab-table__wide">{node.top_processes?.[0] ?? '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </section>
 </LabLayout>
