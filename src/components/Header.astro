@@ -1,5 +1,5 @@
 ---
-import { navigation, site } from '../data/site';
+import { navigation } from '../data/site';
 
 const { currentPath } = Astro.props as { currentPath: string };
 const pathOnly = (value: string) => {
@@ -17,8 +17,7 @@ const isActive = (href: string) => {
   <div class="shell site-header__inner">
     <a class="brand" href="/">
       <span class="brand__text">
-        <strong>{site.nativeName}</strong>
-        <small>{site.role}</small>
+        <strong>中文主页</strong>
       </span>
     </a>
 
