@@ -2,10 +2,13 @@
 import { navigation, site } from '../data/site';
 
 const { currentPath } = Astro.props as { currentPath: string };
-const normalize = (value: string) => (value.endsWith('/') ? value : `${value}/`);
+const pathOnly = (value: string) => {
+  const normalized = value.split('#')[0] || '/';
+  return normalized.endsWith('/') ? normalized : `${normalized}/`;
+};
 const isActive = (href: string) => {
-  const current = normalize(currentPath || '/');
-  const target = normalize(href);
+  const current = pathOnly(currentPath || '/');
+  const target = pathOnly(href);
   return target === '/' ? current === '/' : current.startsWith(target);
 };
 ---
