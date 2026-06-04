@@ -15,8 +15,8 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
 <BaseLayout>
   <section class="shell academic-home">
     <aside class="academic-sidebar">
-      <div class="author-avatar" aria-hidden="true">
-        <span>高</span>
+      <div class="author-avatar">
+        <img src="/images/avatar.jpg" alt={site.nativeName} />
       </div>
 
       <div class="author-content">
@@ -25,8 +25,8 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
       </div>
 
       <ul class="author-links">
-        <li class="author-motto">“{site.intro}”</li>
-        <li>📍 {site.location}</li>
+        <li class="author-motto">—— “<em>{site.intro}</em>”</li>
+        <li><span class="author-icon">⌖</span>{site.location}</li>
         {site.social.map((item) => (
           <li>
             <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
@@ -93,10 +93,12 @@ const featuredProjects = projects.filter((project) => project.featured).slice(0,
         <div class="paper-list">
           {featuredProjects.map((project, index) => (
             <article class="paper-box">
-              <div class="paper-visual">
+              <div class={`paper-visual paper-visual--${index + 1}`}>
                 <div class="paper-visual__badge">{project.category}</div>
-                <div class={`paper-visual__mark paper-visual__mark--${index + 1}`}>
-                  {project.title.slice(0, 2)}
+                <div class="paper-visual__diagram" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
                 </div>
               </div>
               <div class="paper-text">
